@@ -1,9 +1,10 @@
-const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
-const fs = require('fs');
+import pkg from 'whatsapp-web.js';
+const { Client, LocalAuth } = pkg;
+import qrcode from 'qrcode-terminal'
+import fs from 'fs'
 
 // utils
-const sendMessages = require('./utils/sendMessages') ;
+import sendMessages from './utils/sendMessages.js'
 
 const client = new Client({
     authStrategy: new LocalAuth({clientId: "sessionId"})
