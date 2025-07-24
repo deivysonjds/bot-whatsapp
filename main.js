@@ -16,7 +16,8 @@ client.on('qr', (qr) => {
 
 client.on('ready', () => {
     console.log('Client is ready!');
-    sendMessages(client, JSON.parse(fs.readFileSync('./listNumbers.json', 'utf-8')).map(item => `${item.number}@c.us`));
+    sendMessages(client, JSON.parse(fs.readFileSync('./listNumbers.json', 'utf-8')));
+
 });
 
 client.initialize();

@@ -2,11 +2,12 @@ import sleep from "./sleep.js";
 import getRandomInt from "./getRandomInt.js";
 
 export default async function sendMessages(client, numbers) {
-    const text = 'Essa é uma mensagem de teste enviada pelo bot! \n\nTeste 2: Sucesso!';
+    let text = ''
 
-    for (const number of numbers) {
+    for (const { number, name } of numbers) {
         console.log(`Verificando número: ${number}`);
 
+        text = `Olá, ${name || 'amigo(a)'}!\n\n Esta é uma mensagem automática de teste enviada pelo bot.`;
         try {
             const isRegistered = await client.isRegisteredUser(number);
             if (!isRegistered) {
@@ -14,7 +15,7 @@ export default async function sendMessages(client, numbers) {
                 continue;
             }
 
-            await client.sendMessage(number, text);
+            await client.sendMessage(`${number}@c.us`, text);
             console.log(`✅ Mensagem enviada para ${number}`);
             let seconds = getRandomInt(3, 5);
             console.log(`⏳ Aguardando ${seconds} segundos antes de enviar a próxima mensagem...\n\n`);
