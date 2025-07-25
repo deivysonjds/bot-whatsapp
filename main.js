@@ -1,48 +1,32 @@
-import pkg from 'whatsapp-web.js';
-const { Client, LocalAuth } = pkg;
-import qrcode from 'qrcode-terminal'
-import fs from 'fs'
+import { app, BrowserWindow, ipcMain } from 'electron';
+import path from 'path';
+import whatsappConnection from './utils/whatsappConection.js';
 
 // env
 import dotenv from 'dotenv';
 dotenv.config();
 
-// utils
-import sendMessages from './utils/sendMessages.js'
+let mainWindow;
 
-// requests
-import getConfigData from './requests/getConfigData.js';
+app.whenReady().then(() => {
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      preload: path.join(process.cwd(), 'preload.js'),
+    },
+    autoHideMenuBar: true,
+  });
 
-const client = new Client({
-    authStrategy: new LocalAuth({clientId: "sessionId"})
+  mainWindow.loadFile('./interface/index.html');
+
+  mainWindow.webContents.openDevTools();
+
+  ipcMain.on('iniciar-whatsapp', () => {
+    whatsappConnection(mainWindow);
+  });
 });
 
-client.on('qr', (qr) => {
-    qrcode.generate(qr, {small: true});
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit();
 });
-
-client.on('ready', async () => {
-    console.log('Client is ready!');
-    let response = await getConfigData();
-
-    if (!response.isActive) {
-        console.log('Bot desativado!');
-        process.exit(1);
-    }
-
-    if(response.numberClient !== client.info.wid.user) {
-        console.log(`Número do cliente não corresponde ao número do bot: ${response.numberClient}`);
-        process.exit(1);
-    }
-
-    sendMessages(
-        client, 
-        JSON.parse(fs.readFileSync('./listNumbers.json', 'utf-8')),
-        {
-            min: response.minBreak,
-            max: response.maxBreak
-        }
-    )
-});
-
-client.initialize();
