@@ -1,15 +1,106 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Bot WhatsApp</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer ></script>
+	<meta charset="UTF-8">
+	<title>Bot WhatsApp</title>
+	<link rel="stylesheet" href="style.css">
+	<script src="script.js" defer></script>
 </head>
+
 <body>
-  <div id="root">
-    <div id="loading"></div>
-    <div id="qr-container"></div>
-  </div>
+	<div id="root">
+		<div id="loading"></div>
+		<div id="qr-container"></div>
+	</div>
+	<div class="tabs invisible">
+        <div>
+            <button class="tab active" onclick="toggleTab(event)">Bot WhatsApp</button>
+            <button class="tab" onclick="toggleTab(event)">Configurações</button>
+        </div>
+        <p>
+            usuário: <span id="user-name">Desconhecido</span>
+        </p>
+	</div>
+	<div class="settings-section invisible">
+		<h2>Configurações do Bot</h2>
+
+		<div class="form-group">
+			<label for="message-template">Modelo de Mensagem</label>
+			<textarea id="message-template" rows="6"
+				placeholder="Digite o modelo da mensagem aqui... Use {nome} e {cpf} para variáveis"></textarea>
+		</div>
+
+		<div class="form-group">
+			<label for="delay">Intervalo entre mensagens (ms)</label>
+			<input type="number" id="delay" value="2000" min="500">
+		</div>
+
+		<div class="form-group">
+			<label for="media-file">Arquivo de Mídia (opcional)</label>
+			<input type="file" id="media-file" accept="image/*,video/*,application/pdf">
+		</div>
+
+		<div class="form-group checkbox">
+			<input type="checkbox" id="send-media" checked>
+			<label for="send-media">Enviar mídia com a mensagem</label>
+		</div>
+
+		<div class="form-actions">
+			<button class="btn primary">Salvar Configurações</button>
+		</div>
+	</div>
+	<div class="container invisible">
+
+        <!-- Área de upload do arquivo -->
+        <div class="upload-section">
+            <h2>Carregar Dados</h2>
+            <div class="file-drop-area">
+                <span class="file-msg">Arraste o arquivo XLSX aqui ou clique para selecionar</span>
+                <input class="file-input" type="file" accept=".xlsx,.xls">
+            </div>
+            <div class="file-info" id="file-info"></div>
+        </div>
+
+        <!-- Visualização dos dados -->
+        <div class="data-preview">
+            <h2>Dados Carregados <span id="data-count">(0 registros)</span></h2>
+            <div class="table-container">
+                <table id="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dados serão inseridos aqui via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Controles e status -->
+        <div class="controls">
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">0% concluído</span>
+            </div>
+
+            <div class="buttons">
+                <button id="start-btn" class="btn primary" disabled>Iniciar Bot</button>
+                <button id="stop-btn" class="btn danger" disabled>Parar</button>
+            </div>
+
+            <div class="status">
+                <p>Status: <span id="bot-status">Pronto</span></p>
+                <p>Mensagens enviadas: <span id="sent-count">0</span>/<span id="total-count">0</span></p>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>
