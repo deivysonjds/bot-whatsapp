@@ -20,7 +20,7 @@ app.whenReady().then(() => {
 
   mainWindow.loadFile('./interface/index.html');
 
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   ipcMain.on('iniciar-whatsapp', () => {
     whatsappConnection(mainWindow);

@@ -1,20 +1,29 @@
-import xlsx from 'xlsx'
-import fs from 'fs'
+export default function excelToJson(e, data) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
 
-export default function xlsxToJson() {
-    
+    reader.onload = function (event) {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+
+        // Converte para JSON
+        data = XLSX.utils.sheet_to_json(worksheet);
+        let dataTableBody = document.querySelector('#data-table tbody');
+
+        for (const client of data) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${client.id}</td>
+                <td>${client.name}</td>
+                <td>${client.email}</td>
+            `;
+            dataTableBody.appendChild(row);
+
+        }
+    };
+
+    reader.readAsArrayBuffer(file);
 }
-// Carrega o arquivo Excel
-const workbook = xlsx.readFile('arquivo.xlsx');
-
-// Pega o nome da primeira aba
-const sheetName = workbook.SheetNames[0];
-
-// Converte os dados da aba para JSON
-const worksheet = workbook.Sheets[sheetName];
-const jsonData = xlsx.utils.sheet_to_json(worksheet);
-
-// Salva em arquivo JSON
-fs.writeFileSync('saida.json', JSON.stringify(jsonData, null, 2));
-
-console.log('Conversão concluída! JSON salvo em "saida.json"');

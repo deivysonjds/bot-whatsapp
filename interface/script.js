@@ -1,8 +1,11 @@
+import excelToJson from "../utils/xlsxToJson.js";
+
+const data = [];
+
 window.addEventListener('DOMContentLoaded', () => {
   const status = document.getElementById('loading');
   const qrContainer = document.getElementById('qr-container');
-  const root = document.getElementById('root');
-
+  
   window.whatsappAPI.onLogged((data) => {
     document.querySelector('#root').classList.add('invisible');
     document.querySelector('.settings-section').classList.add('invisible');
@@ -18,16 +21,19 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   window.whatsappAPI.onInactive((message) => {
+    qrContainer.classList.add('invisible')
     status.id = ''
     status.innerText = message;
   });
-
+  
   window.whatsappAPI.onError((message) => {
+    qrContainer.classList.add('invisible')
     status.id = ''
     status.innerText = message;
   });
-
+  
   window.whatsappAPI.onUnauthorized((message) => {
+    qrContainer.classList.add('invisible')
     status.id = ''
     status.innerText = message;
   });
@@ -57,3 +63,7 @@ function toggleTab(event) {
   document.querySelector('.container').classList.remove('invisible');
   document.querySelector('.settings-section').classList.add('invisible');
 }
+
+document.getElementById('file-input').addEventListener('change', (e)=>{
+  excelToJson(e, data)
+});
