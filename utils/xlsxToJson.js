@@ -1,7 +1,8 @@
-export default function excelToJson(e, data) {
+
+export default function excelToJson(e) {
     const file = e.target.files[0];
     const reader = new FileReader();
-
+    let data_array = []
     reader.onload = function (event) {
         const data = new Uint8Array(event.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
@@ -10,20 +11,23 @@ export default function excelToJson(e, data) {
         const worksheet = workbook.Sheets[firstSheetName];
 
         // Converte para JSON
-        data = XLSX.utils.sheet_to_json(worksheet);
+        let data_json = XLSX.utils.sheet_to_json(worksheet);
         let dataTableBody = document.querySelector('#data-table tbody');
 
-        for (const client of data) {
-            const row = document.createElement('tr');
+        for (const client of data_json) {
+            let row = document.createElement('tr');
             row.innerHTML = `
-                <td>${client.id}</td>
-                <td>${client.name}</td>
+                <td>${client.nome}</td>
                 <td>${client.email}</td>
+                <td>${client.numero}</td>
             `;
+            console.log(client);
+            data_array.push(client)
             dataTableBody.appendChild(row);
 
         }
     };
 
     reader.readAsArrayBuffer(file);
+    return data_array;
 }

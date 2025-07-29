@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import whatsappConnection from './utils/whatsappConection.js';
+import sendMessages from './utils/sendMessages.js';
 
 // env
 import dotenv from 'dotenv';
@@ -21,9 +22,19 @@ app.whenReady().then(() => {
   mainWindow.loadFile('./interface/index.html');
 
   mainWindow.webContents.openDevTools();
+  let client;
 
   ipcMain.on('iniciar-whatsapp', () => {
-    whatsappConnection(mainWindow);
+    client = whatsappConnection(mainWindow);
+  });
+
+  ipcMain.on('sendMessages', async (e, { data, interval }) => {
+
+    await sendMessages(
+      client,
+      data,
+      interval
+    );
   });
 });
 

@@ -31,8 +31,9 @@ export default function whatsappConnection(mainWindow) {
       return;
     }
 
-    mainWindow.webContents.send('logged', response);
+    mainWindow.webContents.send('logged',  response);
   });
 
   client.initialize();
+  return client
 }

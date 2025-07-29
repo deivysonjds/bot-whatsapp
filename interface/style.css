@@ -104,9 +104,9 @@ h2 {
   display: block;
 }
 
-.file-input {
-  display: none;
-}
+/* .file-input {
+  display: block;
+} */
 
 .table-container {
   max-height: 300px;
