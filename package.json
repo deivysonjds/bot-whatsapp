@@ -3,20 +3,53 @@
   "version": "1.0.0",
   "type": "module",
   "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "Bot de envio de mensagens via WhatsApp usando Electron e whatsapp-web.js",
   "author": "Deivyson J.da Silva",
   "license": "ISC",
-  "description": "",
+
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
   "dependencies": {
     "dotenv": "^17.2.0",
     "qrcode": "^1.5.4",
     "whatsapp-web.js": "^1.23.0",
     "xlsx": "^0.18.5"
   },
+
   "devDependencies": {
-    "electron": "^37.2.4"
+    "electron": "^37.2.4",
+    "electron-builder": "^26.0.12"
+  },
+
+  "build": {
+    "appId": "com.deivyson.bot-whatsapp",
+    "productName": "Bot WhatsApp",
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "package.json",
+      "utils/**/*",
+      "interface/**/*",
+      "requests/**/*",
+      ".env"
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": ["nsis", "portable"],
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    }
   }
 }

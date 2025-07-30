@@ -6,7 +6,7 @@ export default async function sendMessages(client, numbers, interval) {
     
     for (const number of JSON.parse(numbers)) {
 
-        text = `Olá, ${number.nome || 'amigo(a)'}!\n\nEsta é uma mensagem automática de teste enviada pelo bot. \n\nFuncionalidade em teste:\n - validação de usuário logado`;
+        text = `Olá, ${number.nome || 'amigo(a)'}!\n\nEsta é uma mensagem automática de teste enviada pelo bot.`;
         try {
             const isRegistered = await client.isRegisteredUser(`${number.numero}@c.us`);
             if (!isRegistered) {

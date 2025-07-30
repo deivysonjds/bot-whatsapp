@@ -2,5 +2,6 @@
 /.wwebjs_auth
 /.wwebjs_cache
 /listNumbers.json
+/dist
 
 .env
