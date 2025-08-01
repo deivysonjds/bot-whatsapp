@@ -1,39 +1,63 @@
 import pkg from 'whatsapp-web.js';
 const { Client, LocalAuth } = pkg;
+import { app } from 'electron';
 import qrcode from 'qrcode';
+import path from 'path';
+import puppeteer from 'puppeteer';
 import getConfigData from '../requests/getConfigData.js';
+import log from 'electron-log';
 
-export default function whatsappConnection(mainWindow) {
-  const client = new Client({
-    authStrategy: new LocalAuth({ clientId: "sessionId" })
-  });
+export default async function whatsappConnection(mainWindow) {
+	await app.whenReady();
 
-  client.on('qr', async (qr) => {
-    const qrImage = await qrcode.toDataURL(qr);
-    mainWindow.webContents.send('qr', qrImage);
-  });
+	const client = new Client({
+		authStrategy: new LocalAuth({
+			dataPath: path.join(app.getPath('userData'), 'wweb-session')
+		}),
+		puppeteer: {
+			headless: true,
+			args: ['--no-sandbox']
+		}
+	});
 
-  client.on('ready', async () => {
-    let response = await getConfigData()
-    
-    if (!response) {
-      mainWindow.webContents.send('error', '❌ Erro ao obter dados de configuração');
-      return;
-    }
+	client.on('qr', async (qr) => {
+		log.info('QR Code recebido');
+		const qrImage = await qrcode.toDataURL(qr);
+		mainWindow.webContents.send('qr', qrImage);
+	});
 
-    if (!response.isActive){
-        mainWindow.webContents.send('inactive', '❌ O bot está desativado!');
-        return;
-    }
+	client.on('error', (err) => {
+		console.error('[Erro WhatsApp]', err);
+	});
 
-    if (response.numberClient !== client.info.wid.user) {
-      mainWindow.webContents.send('unauthorized', `❌ O número do cliente não corresponde ao número configurado: ${response.numberClient}`);
-      return;
-    }
+	const clienReady = new Promise((resolve) => {
+		client.on('ready', async () => {
+			let response;
+			try {
+				response = await getConfigData()
+			} catch (error) {
+				log.error('Erro ao obter dados de configuração:', error);
+			}
+			if (!response) {
+				mainWindow.webContents.send('error', '❌ Erro ao obter dados de configuração');
+				return;
+			}
 
-    mainWindow.webContents.send('logged',  response);
-  });
+			if (!response.isActive) {
+				mainWindow.webContents.send('inactive', '❌ O bot está desativado!');
+				return;
+			}
 
-  client.initialize();
-  return client
+			if (response.numberClient !== client.info.wid.user) {
+				mainWindow.webContents.send('unauthorized', `❌ O número do cliente não corresponde ao número configurado: ${response.numberClient}`);
+				return;
+			}
+
+			mainWindow.webContents.send('logged', response);
+			resolve(client)
+		});
+	});
+
+	client.initialize();
+	return clienReady
 }

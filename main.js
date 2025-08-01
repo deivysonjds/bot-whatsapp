@@ -1,7 +1,12 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import path from 'path';
 import whatsappConnection from './utils/whatsappConection.js';
-import sendMessages from './utils/sendMessages.js';
+import sendMessage from './utils/sendMessages.js';
+
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 
 // env
 import dotenv from 'dotenv';
@@ -14,28 +19,32 @@ app.whenReady().then(() => {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(process.cwd(), 'preload.js'),
+      preload: join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false
     },
     autoHideMenuBar: true,
   });
 
   mainWindow.loadFile('./interface/index.html');
 
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
   let client;
 
-  ipcMain.on('iniciar-whatsapp', () => {
-    client = whatsappConnection(mainWindow);
+  ipcMain.on('iniciar-whatsapp', async () => {
+    client = await whatsappConnection(mainWindow);
   });
 
-  ipcMain.on('sendMessages', async (e, { data, interval }) => {
-
-    await sendMessages(
+  ipcMain.on('sendMessage', async (e, { number, interval, text }) => {
+    
+    await sendMessage(
       client,
-      data,
-      interval
+      number,
+      interval,
+      text
     );
   });
+
 });
 
 app.on('window-all-closed', () => {

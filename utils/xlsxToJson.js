@@ -13,13 +13,13 @@ export default function excelToJson(e) {
         // Converte para JSON
         let data_json = XLSX.utils.sheet_to_json(worksheet);
         let dataTableBody = document.querySelector('#data-table tbody');
-
+        
         for (const client of data_json) {
             let row = document.createElement('tr');
             row.innerHTML = `
                 <td>${client.nome}</td>
-                <td>${client.email}</td>
                 <td>${client.numero}</td>
+                <td></td>
             `;
             console.log(client);
             data_array.push(client)

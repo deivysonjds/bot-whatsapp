@@ -5,3 +5,5 @@
 /dist
 
 .env
+out/
+config.json

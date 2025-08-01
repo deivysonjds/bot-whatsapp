@@ -6,25 +6,34 @@
   "description": "Bot de envio de mensagens via WhatsApp usando Electron e whatsapp-web.js",
   "author": "Deivyson J.da Silva",
   "license": "ISC",
-
   "scripts": {
-    "start": "electron .",
+    "start": "electron-forge start",
     "dist": "electron-builder",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
-
   "dependencies": {
     "dotenv": "^17.2.0",
+    "electron-log": "^5.4.2",
+    "electron-squirrel-startup": "^1.0.1",
+    "puppeteer": "^24.15.0",
     "qrcode": "^1.5.4",
     "whatsapp-web.js": "^1.23.0",
     "xlsx": "^0.18.5"
   },
-
   "devDependencies": {
+    "@electron-forge/cli": "^7.8.2",
+    "@electron-forge/maker-deb": "^7.8.2",
+    "@electron-forge/maker-rpm": "^7.8.2",
+    "@electron-forge/maker-squirrel": "^7.8.2",
+    "@electron-forge/maker-zip": "^7.8.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.8.2",
+    "@electron-forge/plugin-fuses": "^7.8.2",
+    "@electron/fuses": "^1.8.0",
     "electron": "^37.2.4",
     "electron-builder": "^26.0.12"
   },
-
   "build": {
     "appId": "com.deivyson.bot-whatsapp",
     "productName": "Bot WhatsApp",
@@ -32,6 +41,13 @@
       "output": "dist",
       "buildResources": "assets"
     },
+    "extraResources": [
+      {
+        "from": "config.json",
+        "to": "config.json"
+      }
+    ],
+    "asar": false,
     "files": [
       "main.js",
       "preload.js",
@@ -41,9 +57,15 @@
       "requests/**/*",
       ".env"
     ],
+    "asarUnpack": [
+      "node_modules/puppeteer/.local-chromium"
+    ],
     "win": {
       "icon": "assets/icon.ico",
-      "target": ["nsis", "portable"],
+      "target": [
+        "nsis",
+        "portable"
+      ],
       "signAndEditExecutable": false
     },
     "nsis": {
