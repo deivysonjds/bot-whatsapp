@@ -57,15 +57,31 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	let btnStart = document.querySelector('#start-btn');
 	btnStart.addEventListener('click', async () => {
+		btnStart.disabled = true;
+		let dataTableBody = document.querySelectorAll('#data-table tbody tr td:nth-child(3)');
+		
+		for (let index = 0; index < data.length; index++) {
+			if (data[index].status) {
+				continue;
+			}
 
-		for (const element of data) {
-			await window.whatsappAPI.sendMessage({
-				number: JSON.stringify(element),
+			let res = await window.whatsappAPI.sendMessage({
+				number: JSON.stringify(data[index]),
 				interval,
-				text: `Olá, ${element.nome || 'amigo(a)'}!\n\nEsta é uma mensagem automática de teste enviada pelo bot.`
+				text: `Olá, ${data[index].nome || 'amigo(a)'}!\n\nEsta é uma mensagem automática de teste enviada pelo bot.`
 			});
-			
+
+			if (res.success) {
+				dataTableBody[index].innerHTML = `<span class="success">✅ Enviado</span>`;
+				data[index].status = 'Enviado';
+				continue;
+			}
+
+			dataTableBody[index].innerHTML = `<span class="error">❌ erro </span>`;
+			data[index].status = 'Erro';
 		}
+		window.alert('Mensagens enviadas!');
+		btnStart.disabled = false;
 	})
 
 	document.querySelectorAll('.tab').forEach(button => {

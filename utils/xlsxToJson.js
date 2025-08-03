@@ -21,7 +21,6 @@ export default function excelToJson(e) {
                 <td>${client.numero}</td>
                 <td></td>
             `;
-            console.log(client);
             data_array.push(client)
             dataTableBody.appendChild(row);
 

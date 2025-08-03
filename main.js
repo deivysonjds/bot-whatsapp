@@ -35,14 +35,19 @@ app.whenReady().then(() => {
     client = await whatsappConnection(mainWindow);
   });
 
-  ipcMain.on('sendMessage', async (e, { number, interval, text }) => {
-    
-    await sendMessage(
-      client,
-      number,
-      interval,
-      text
-    );
+  ipcMain.handle('sendMessage', async (e, { number, interval, text }) => {
+
+    try {
+      await sendMessage(
+        client,
+        number,
+        interval,
+        text
+      );
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
   });
 
 });
