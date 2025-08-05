@@ -1,15 +1,21 @@
 import config from "./config.js";
 
-export default async function getConfigData() {
+export default async function postAmountMessages(amount) {
 
-    let response = await fetch(`${config.API_URL}/configBotWhatsapp`, {
-        method: 'GET',
+    let response = await fetch(`${config.API_URL}/messages_sent`, {
+        method: 'POST',
         headers: {
             'X-Parse-Application-Id': config.PARSE_APPLICATION_ID,
             'X-Parse-REST-API-Key': config.PARSE_API_KEY,
             'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({
+            'amountMessages': amount
+        })
     })
+
+    let text = await response.text()
+    console.log(text);
 
     if (!response.ok) {
         throw new Error(`Error fetching config data: ${response.statusText}`);

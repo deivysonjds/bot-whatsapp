@@ -3,7 +3,6 @@ const { Client, LocalAuth } = pkg;
 import { app } from 'electron';
 import qrcode from 'qrcode';
 import path from 'path';
-import puppeteer from 'puppeteer';
 import getConfigData from '../requests/getConfigData.js';
 import log from 'electron-log';
 
@@ -21,7 +20,6 @@ export default async function whatsappConnection(mainWindow) {
 	});
 
 	client.on('qr', async (qr) => {
-		log.info('QR Code recebido');
 		const qrImage = await qrcode.toDataURL(qr);
 		mainWindow.webContents.send('qr', qrImage);
 	});
@@ -44,12 +42,12 @@ export default async function whatsappConnection(mainWindow) {
 			}
 
 			if (!response.isActive) {
-				mainWindow.webContents.send('inactive', '❌ O bot está desativado!');
+				mainWindow.webContents.send('error', '❌ O bot está desativado!');
 				return;
 			}
 
 			if (response.numberClient !== client.info.wid.user) {
-				mainWindow.webContents.send('unauthorized', `❌ O número do cliente não corresponde ao número configurado: ${response.numberClient}`);
+				mainWindow.webContents.send('error', `❌ O número do cliente não corresponde ao número configurado: ${response.numberClient}`);
 				return;
 			}
 

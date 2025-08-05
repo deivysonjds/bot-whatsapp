@@ -10,7 +10,6 @@ export default function excelToJson(e) {
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
 
-        // Converte para JSON
         let data_json = XLSX.utils.sheet_to_json(worksheet);
         let dataTableBody = document.querySelector('#data-table tbody');
         

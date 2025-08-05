@@ -10,6 +10,7 @@ const __dirname = dirname(__filename);
 
 // env
 import dotenv from 'dotenv';
+import postAmountMessages from './requests/postAmountMessages.js';
 dotenv.config();
 
 let mainWindow;
@@ -28,7 +29,7 @@ app.whenReady().then(() => {
 
   mainWindow.loadFile('./interface/index.html');
 
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
   let client;
 
   ipcMain.on('iniciar-whatsapp', async () => {
@@ -49,6 +50,10 @@ app.whenReady().then(() => {
       return { success: false, error: error.message };
     }
   });
+
+  ipcMain.on('postAmountMessages', async (e,amountMessages)=>{
+    await postAmountMessages(amountMessages)
+  })
 
 });
 
