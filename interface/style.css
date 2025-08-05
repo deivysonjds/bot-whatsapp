@@ -24,6 +24,18 @@ body {
   flex-direction: column;
 }
 
+.interval {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+.interval div {
+  width: 100%;
+}
+
 #root {
   display: flex;
   flex-direction: column;

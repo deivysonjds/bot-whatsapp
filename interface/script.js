@@ -25,6 +25,9 @@ window.addEventListener('DOMContentLoaded', () => {
 		document.querySelector('.container').classList.remove('invisible');
 		document.querySelector('.tabs').classList.remove('invisible');
 		document.querySelector('#user-name').textContent = data.numberClient;
+
+		document.querySelector("#minBreak").value = interval.minBreak
+		document.querySelector("#maxBreak").value = interval.maxBreak
 	});
 
 	window.whatsappAPI.onQR((qrImage) => {
@@ -78,7 +81,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			data[index].status = 'Erro';
 		}
 		if (amountMessages > 0) {
-			window.whatsappAPI.postAmountMessages(amountMessages)
+			window.b4a.postAmountMessages(amountMessages)
 		}
 
 		window.alert(`${amountMessages} mensagens enviadas!`);
@@ -95,6 +98,28 @@ window.addEventListener('DOMContentLoaded', () => {
 	btnStop.addEventListener('click', ()=>{
 		stopSendMessages = true
 		window.alert('interrompendo envio de mensagens...')
+	})
+
+	let btnSaveChanges = document.querySelector('#saveChanges')
+	btnSaveChanges.addEventListener('click',async ()=>{
+		let elementMinBreak = document.querySelector('#minBreak');
+		let minBreak = elementMinBreak.value
+
+		let elementMaxBreak = document.querySelector('#maxBreak');
+		let maxBreak = elementMaxBreak.value
+
+		let res = await window.b4a.putConfigData({
+			minBreak: Number(minBreak),
+			maxBreak: Number(maxBreak)
+		})
+
+		if(!res.ok){
+			console.log(await res);
+			return
+		}
+		
+		interval.minBreak = minBreak
+		interval.maxBreak = maxBreak
 	})
 
 });

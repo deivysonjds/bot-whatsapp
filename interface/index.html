@@ -15,7 +15,7 @@
 	</div>
 	<div class="tabs invisible">
         <div>
-            <button class="tab active">Bot WhatsApp</button>
+            <button class="tab active">Início</button>
             <button class="tab">Configurações</button>
         </div>
         <p>
@@ -26,28 +26,20 @@
 		<h2>Configurações do Bot</h2>
 
 		<div class="form-group">
-			<label for="message-template">Modelo de Mensagem</label>
-			<textarea id="message-template" rows="6"
-				placeholder="Digite o modelo da mensagem aqui... Use {nome} e {cpf} para variáveis"></textarea>
-		</div>
-
-		<div class="form-group">
-			<label for="delay">Intervalo entre mensagens (ms)</label>
-			<input type="number" id="delay" value="2000" min="500">
-		</div>
-
-		<div class="form-group">
-			<label for="media-file">Arquivo de Mídia (opcional)</label>
-			<input type="file" id="media-file" accept="image/*,video/*,application/pdf">
-		</div>
-
-		<div class="form-group checkbox">
-			<input type="checkbox" id="send-media" checked>
-			<label for="send-media">Enviar mídia com a mensagem</label>
+            <div class="interval">
+                <div>
+                    <label for="minBreak">Menor intervalo</label>
+                    <input type="number" id="minBreak" min="1">
+                </div>
+                <div>
+                    <label for="maxBreak">Maior intervalo</label>
+                    <input type="number" id="maxBreak" min="2">
+                </div>
+            </div>
 		</div>
 
 		<div class="form-actions">
-			<button class="btn primary">Salvar Configurações</button>
+			<button id="saveChanges" class="btn primary">Salvar Configurações</button>
 		</div>
 	</div>
 	<div class="container invisible">

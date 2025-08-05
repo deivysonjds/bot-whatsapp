@@ -10,7 +10,7 @@ export default async function sendMessages(client, number, interval, text) {
             throw new Error(`Número ${number.numero} não está registrado no WhatsApp.`);
         }
 
-        // await client.sendMessage(`${number.numero}@c.us`, text);
+        await client.sendMessage(`${number.numero}@c.us`, text);
         let seconds = Math.floor(Math.random() * (interval.maxBreak - interval.minBreak) + interval.minBreak);
 
         await sleep(seconds * 1000);
