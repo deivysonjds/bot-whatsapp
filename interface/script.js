@@ -5,10 +5,19 @@ let interval;
 let stopSendMessages = false
 
 window.addEventListener('DOMContentLoaded', () => {
+	let progressFill = document.querySelector('.progress-fill')
+	let progressText = document.querySelector('.progress-text')
+	let sentCount = document.querySelector('#sent-count')
 	const status = document.getElementById('loading');
 	const qrContainer = document.getElementById('qr-container');
-	document.querySelector('.file-input').addEventListener('change', (e) => {
-		data = excelToJson(e, data)
+
+	document.querySelector('.file-input').addEventListener('change', async (e) => {
+		data = await excelToJson(e, data)
+		document.querySelector('#data-count').textContent = `(${data.length} registros)`
+		document.querySelector('#total-count').textContent = `${data.length}`
+		progressFill.style.width = '0%'
+		progressText.textContent = '0% concluído'
+		sentCount.textContent = '0'
 		document.querySelector('#start-btn').disabled = false
 	});
 
@@ -54,7 +63,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		let dataTableBody = document.querySelectorAll('#data-table tbody tr td:nth-child(3)');
 		let amountMessages = 0;
 		stopSendMessages = false
-
+		let progress = 0;
 		for (let index = 0; index < data.length; index++) {
 			if (data[index].status) {
 				continue;
@@ -69,16 +78,22 @@ window.addEventListener('DOMContentLoaded', () => {
 				interval,
 				text: `Olá, ${data[index].nome || 'amigo(a)'}!\n\nEsta é uma mensagem automática de teste enviada pelo bot.`
 			});
+			
+			progress = ((index+1)/data.length*100).toFixed(2)
+			progressFill.style.width = `${progress}%`
+			progressText.innerHTML = `${progress}% concluído`
 
 			if (res.success) {
 				dataTableBody[index].innerHTML = `<span class="success">✅ Enviado</span>`;
 				data[index].status = 'Enviado';
 				amountMessages++
+				sentCount.textContent = amountMessages
 				continue;
 			}
-
-			dataTableBody[index].innerHTML = `<span class="error">❌ erro </span>`;
-			data[index].status = 'Erro';
+			console.log(res.error);
+			
+			dataTableBody[index].innerHTML = `<span><i title="${res.error}"><img class="errorIcon" src="../assets/iconExc.png" alt="erro"></i>Erro</span>`;
+			data[index].status = res.error;
 		}
 		if (amountMessages > 0) {
 			window.b4a.postAmountMessages(amountMessages)
@@ -101,25 +116,27 @@ window.addEventListener('DOMContentLoaded', () => {
 	})
 
 	let btnSaveChanges = document.querySelector('#saveChanges')
-	btnSaveChanges.addEventListener('click',async ()=>{
+	btnSaveChanges.addEventListener('click', async ()=>{
 		let elementMinBreak = document.querySelector('#minBreak');
 		let minBreak = elementMinBreak.value
 
 		let elementMaxBreak = document.querySelector('#maxBreak');
 		let maxBreak = elementMaxBreak.value
-
+		
 		let res = await window.b4a.putConfigData({
 			minBreak: Number(minBreak),
 			maxBreak: Number(maxBreak)
 		})
 
-		if(!res.ok){
-			console.log(await res);
+
+		if(!res.success){
+			window.alert(`Erro: ${res.error}`)
 			return
 		}
 		
 		interval.minBreak = minBreak
 		interval.maxBreak = maxBreak
+		window.alert('Dados salvos!')
 	})
 
 });

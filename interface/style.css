@@ -157,6 +157,18 @@ th {
   overflow: hidden;
 }
 
+th {
+  text-align: center;
+}
+
+.errorIcon{
+  width: 20px;
+}
+
+.errorIcon:hover{
+  cursor: pointer;
+}
+
 .progress-fill {
   height: 100%;
   background-color: var(--primary);

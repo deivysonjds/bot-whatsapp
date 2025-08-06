@@ -30,7 +30,7 @@ app.whenReady().then(() => {
 
   mainWindow.loadFile('./interface/index.html');
 
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
   let client;
 
   ipcMain.on('iniciar-whatsapp', async () => {

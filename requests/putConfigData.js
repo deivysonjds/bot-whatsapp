@@ -1,7 +1,6 @@
 import config from "./config.js";
 
 export default async function putConfigData(configdata) {
-    console.log(configdata);
     
     let response = await fetch(`${config.API_URL}/configBotWhatsapp/oCFiF3WL52`, {
         method: 'PUT',

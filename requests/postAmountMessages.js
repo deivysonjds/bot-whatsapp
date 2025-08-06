@@ -14,12 +14,9 @@ export default async function postAmountMessages(amount) {
         })
     })
 
-    let text = await response.text()
-    console.log(text);
-
     if (!response.ok) {
         throw new Error(`Error fetching config data: ${response.statusText}`);
     }
     const data = await response.json();
-    return data.results[0];
+    return data;
 }
