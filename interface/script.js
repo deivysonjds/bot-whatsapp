@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	let progressFill = document.querySelector('.progress-fill')
 	let progressText = document.querySelector('.progress-text')
 	let sentCount = document.querySelector('#sent-count')
-	const status = document.getElementById('loading');
+	const status = document.getElementById('text');
 	const qrContainer = document.getElementById('qr-container');
 
 	document.querySelector('.file-input').addEventListener('change', async (e) => {
@@ -21,6 +21,10 @@ window.addEventListener('DOMContentLoaded', () => {
 		document.querySelector('#start-btn').disabled = false
 	});
 
+	window.whatsappAPI.onLoading((data)=>{
+		status.textContent = data
+	})
+
 	window.whatsappAPI.onLogged((data) => {
 		
 		interval = {
@@ -28,8 +32,8 @@ window.addEventListener('DOMContentLoaded', () => {
 			maxBreak: data.maxBreak
 		};
 
+		status.textContent = ''
 		document.querySelector('#root').classList.add('invisible');
-		document.querySelector('#loading').classList.add('invisible');
 		document.querySelector('.settings-section').classList.add('invisible');
 		document.querySelector('.container').classList.remove('invisible');
 		document.querySelector('.tabs').classList.remove('invisible');

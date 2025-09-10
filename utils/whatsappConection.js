@@ -1,61 +1,84 @@
 import pkg from 'whatsapp-web.js';
 const { Client, LocalAuth } = pkg;
-import { app } from 'electron';
+import { app, webContents } from 'electron';
 import qrcode from 'qrcode';
 import path from 'path';
 import getConfigData from '../requests/getConfigData.js';
 import log from 'electron-log';
 
 export default async function whatsappConnection(mainWindow) {
-	await app.whenReady();
+  await app.whenReady();
 
-	const client = new Client({
-		authStrategy: new LocalAuth({
-			dataPath: path.join(app.getPath('userData'), 'wweb-session')
-		}),
-		puppeteer: {
-			headless: true,
-			args: ['--no-sandbox']
-		}
-	});
+  const client = new Client({
+    authStrategy: new LocalAuth({
+      dataPath: path.join(app.getPath('userData'), 'wweb-session')
+    }),
+    puppeteer: {
+      headless: true,
+      args: ['--no-sandbox']
+    }
+  });
 
-	client.on('qr', async (qr) => {
-		const qrImage = await qrcode.toDataURL(qr);
-		mainWindow.webContents.send('qr', qrImage);
-	});
+  // ========= Eventos de debug =========
+  client.on('qr', async (qr) => {
+    const qrImage = await qrcode.toDataURL(qr);
+    // console.log("📲 QR code gerado, escaneie com o celular.");
+    mainWindow.webContents.send('qr', qrImage);
+  });
 
-	client.on('error', (err) => {
-		console.error('[Erro WhatsApp]', err);
-	});
+  client.on('auth_failure', (msg) => {
+    log.error("❌ Falha na autenticação:", msg);
+    mainWindow.webContents.send("❌ Falha na autenticação:")
+  });
 
-	const clienReady = new Promise((resolve) => {
-		client.on('ready', async () => {
-			let response;
-			try {
-				response = await getConfigData()
-			} catch (error) {
-				log.error('Erro ao obter dados de configuração:', error);
-			}
-			if (!response) {
-				mainWindow.webContents.send('error', '❌ Erro ao obter dados de configuração');
-				return;
-			}
+  client.on('loading_screen', (percent, message) => {
+    mainWindow.webContents.send('loading', `⌛ Carregando: ${percent}%`)
+  });
 
-			if (!response.isActive) {
-				mainWindow.webContents.send('error', '❌ O bot está desativado!');
-				return;
-			}
+  client.on('error', (err) => {
+    log.error(
 
-			if (response.numberClient !== client.info.wid.user) {
-				mainWindow.webContents.send('error', `❌ O número do cliente não corresponde ao número configurado: ${response.numberClient}`);
-				return;
-			}
+    )
+    mainWindow.webContents.send("error", 'erro do whatsapp-web.js')
+    return;
+  });
 
-			mainWindow.webContents.send('logged', response);
-			resolve(client)
-		});
-	});
+  // ========= Evento principal =========
+  client.on('ready', async () => {
 
-	client.initialize();
-	return clienReady
+	let response;
+	try {
+	  response = await getConfigData();
+	} catch (error) {
+	  log.error('Erro ao obter dados de configuração:', error);
+	  mainWindow.webContents.send('error', '❌ Erro ao obter dados de configuração');
+	  return;
+	}
+
+	if (!response?.isActive) {
+	  mainWindow.webContents.send('error', '❌ O bot está desativado!');
+	  return;
+	}
+
+	if (response.numberClient !== client.info.wid.user) {
+	  mainWindow.webContents.send(
+		'error',
+		`❌ O número configurado (${response.numberClient}) não corresponde ao conectado (${client.info.wid.user})`
+	  );
+	  return;
+	}
+
+	mainWindow.webContents.send('logged', response);
+//   const clientReady = new Promise((resolve) => {
+//       resolve(client);
+//     });
+  });
+
+  try {
+    client.initialize();
+  } catch (err) {
+    log.error('erro ao iniciar whatsapp', err)
+  }
+
+  return client;
 }

@@ -5,7 +5,8 @@ contextBridge.exposeInMainWorld('whatsappAPI', {
   sendMessage: (data) => ipcRenderer.invoke('sendMessage', data),
   onQR: (callback) => ipcRenderer.on('qr', (_, data) => callback(data)),
   onLogged: (callback) => ipcRenderer.on('logged', (_, data) => callback(data)),
-  onError: (callback) => ipcRenderer.on('error', (_, data) => callback(data))
+  onError: (callback) => ipcRenderer.on('error', (_, data) => callback(data)),
+  onLoading: (callback) => ipcRenderer.on('loading', (_,data) => callback(data))
 });
 
 contextBridge.exposeInMainWorld('b4a', {
