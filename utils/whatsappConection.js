@@ -63,7 +63,7 @@ export default async function whatsappConnection(mainWindow) {
 	if (response.numberClient !== client.info.wid.user) {
 	  mainWindow.webContents.send(
 		'error',
-		`❌ O número configurado (${response.numberClient}) não corresponde ao conectado (${client.info.wid.user})`
+		`❌ O número configurado não corresponde ao conectado (${client.info.wid.user})`
 	  );
 	  return;
 	}
